@@ -1,0 +1,34 @@
+Create a frontend for file sharing app 
+- in which user can...
+    - upload files and paste text 
+    - set password for accessing that files / text
+    -name sharable link's path 
+     - example : if my url is send0.io then user can choose name send0.io/classnotes
+    - select expiry date ( 1, 2, 4, 12, 24 ) hours 
+    - max size limit is 1gb
+- after submitting one sharable link with copy to clipboard button is created 
+
+- if other user paste that then he/she can see and download text and copy text and files 
+- if password was set then it only displays after entering password 
+- else it's open 
+
+
+create this minimilastic frontend using shadcdn in dark theme 
+- all the backend requests are in seperate folder so in component call that backend function only 
+
+sample backend schema 
+send0 {
+    _id: '',
+    password: '',
+    name: '',
+    text: '',
+    filesUrl: [File],
+    expiryTime : enum(1hr, 2hr, 4hr, 6hr, 12hr),
+}
+
+
+file {
+    type: '',
+    url: '',
+}
+
