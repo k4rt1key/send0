@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getSharedContent, uploadFiles } from '@/lib/api'
-import { ServerResponse, UploadData } from '@/lib/types'
+import { UploadData } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+
+import { Progress } from "@/components/ui/progress"
 import { FileIcon, FileText, Image, Archive, Download } from 'lucide-react'
 
 export default function ImprovedSend0Dark() {
@@ -37,9 +39,12 @@ export default function ImprovedSend0Dark() {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
   const { toast } = useToast()
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+  const [progressValue, setProgressValue]= useState(0);
 
   const fetchContent = async (password?: string) => {
     if (name) {
+      setLoading(true);
       const res = await getSharedContent(name, password)
       if (res.success) {
         setContent(res.data as UploadData)
@@ -63,6 +68,7 @@ export default function ImprovedSend0Dark() {
           }
         }
       }
+      setLoading(false);
     }
   }
 
@@ -84,6 +90,8 @@ export default function ImprovedSend0Dark() {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      setLoading(true);
+      setProgressValue(33);
       const response = await uploadFiles({
         name: nameInput,
         text,
@@ -92,6 +100,7 @@ export default function ImprovedSend0Dark() {
         files,
         expiryTime: parseInt(expiryTime)
       })
+      setProgressValue(100);
       if (response.success) {
         toast({
           title: 'Success',
@@ -105,6 +114,7 @@ export default function ImprovedSend0Dark() {
           variant: 'destructive',
         })
       }
+      setLoading(false);
     } catch (error) {
       toast({
         title: 'Error',
@@ -266,7 +276,9 @@ export default function ImprovedSend0Dark() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white">Create Clip</Button>
+              { loading && <Progress value={progressValue} /> }
+              { !loading && 
+              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white">Create Clip</Button> }
             </form>
           )}
         </div>

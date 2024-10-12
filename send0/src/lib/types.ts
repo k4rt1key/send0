@@ -30,3 +30,11 @@ export interface UploadData {
     statusCode: number;
     data: UploadData | [];
   }
+
+  export interface ImportMetaEnv {
+    readonly VITE_BACKEND_URL: string; 
+  }
+  
+  export interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
