@@ -3,8 +3,6 @@ node_modules/
 venv/
 
 # Production build directories
-build/
-dist/
 
 # Environment files
 .env*
