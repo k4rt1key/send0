@@ -10,13 +10,13 @@ export default defineConfig({
     },
   },
   server: {
-    proxy: {
-      // Proxy requests starting with /api to the backend
-      '/api': {
-        target: `https://send0-server.stayinit.in/api`, 
-        changeOrigin: true,            
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
+    // proxy: {
+    //   // Proxy requests starting with /api to the backend
+    //   '/api': {
+    //     target: `/api`, 
+    //     changeOrigin: true,            
+    //     rewrite: (path) => path.replace(/^\/api/, ''),
+    //   },
+    // },
   },
 })

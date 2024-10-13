@@ -19,7 +19,7 @@ export async function uploadFiles(
     formData.append('files', file);
   });
 
-  const response = await axios.post('/api/v1/upload', formData, {
+  const response = await axios.post('https://send0-server.stayinit.in/api/v1/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -60,7 +60,7 @@ export async function getSharedContent(
     formData.append('password', password);
   }
 
-  const response = await axios.post(`/api/v1/getObject`, formData, {
+  const response = await axios.post(`https://send0-server.stayinit.in/api/v1/getObject`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
