@@ -9,6 +9,6 @@ RUN npm install --silent
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 6000
 
-CMD ["npm","run", "dev"]
+CMD ["node", "./dist/app.js"]

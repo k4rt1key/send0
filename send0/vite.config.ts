@@ -13,7 +13,7 @@ export default defineConfig({
     proxy: {
       // Proxy requests starting with /api to the backend
       '/api': {
-        target: `http://localhost:6000/api`, 
+        target: `https://send0-server.stayinit.in/api`, 
         changeOrigin: true,            
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
