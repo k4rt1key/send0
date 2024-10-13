@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getSharedContent, uploadFiles } from '@/lib/api'
-import { ServerResponse, UploadData } from '@/lib/types'
+import { UploadData } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
