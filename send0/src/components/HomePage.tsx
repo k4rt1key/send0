@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getSharedContent, uploadFiles } from '@/lib/api'
-import { UploadData } from '@/lib/types'
+import { ServerResponse, UploadData } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -158,10 +158,10 @@ export default function ImprovedSend0Dark() {
     <div className="font-2 w-full flex justify-center items-center py-8 px-4">
       <div className="w-full max-w-md bg-gray-900/80 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden text-gray-100">
         <div className="p-6">
-          <h1 className="text-3xl font-1 mb-6 text-center text-purple-300">Send0 - The Internet Clipboard</h1>
+          <h1 className="text-xl md:text-3xl font-1 mb-6 text-center text-purple-300">Send0 - The Internet Clipboard</h1>
           
-          <form onSubmit={handleSubmit} className="flex items-center space-x-2 mb-6">
-            <Label htmlFor="name" className="whitespace-nowrap text-md">send0.net/</Label>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:flex-row items-center space-x-2 mb-6">
+            <Label htmlFor="name" className="whitespace-nowrap text-md">send0.vercel.app/</Label>
             <Input
               id="name"
               value={nameInput}
@@ -174,7 +174,7 @@ export default function ImprovedSend0Dark() {
 
           {content ? (
             <div className="space-y-4">
-              <h2 className="text-2xl font-1 text-center text-purple-300">Shared Content</h2>
+              <h2 className="text-lg md:text-2xl font-1 text-center text-purple-300">Shared Content</h2>
               {content.text && (
                 <Textarea
                   value={content.text}
@@ -197,11 +197,7 @@ export default function ImprovedSend0Dark() {
                   <ul className="space-y-2">
                     {content.files.map((file, index) => (
                       <li key={index} className="flex items-center justify-between text-sm bg-gray-800 p-2 rounded">
-                        <div className="flex items-center space-x-2">
-                          {getFileIcon(file.name)}
-                          <span className="truncate">{file.name}</span>
-                        </div>
-                        <Button
+                         <Button
                           asChild
                           size="sm"
                           variant="ghost"
@@ -211,6 +207,11 @@ export default function ImprovedSend0Dark() {
                             <Download className="w-4 h-4" />
                           </a>
                         </Button>
+                        <div className="flex overflow-x-scroll w-full items-center space-x-2">
+                          {getFileIcon(file.name)}
+                          <span className="overflow-x-scroll w-full">{file.name}</span>
+                        </div>
+                       
                       </li>
                     ))}
                   </ul>
@@ -219,7 +220,7 @@ export default function ImprovedSend0Dark() {
             </div>
           ) : (
             <form onSubmit={handleUpload} className="space-y-4">
-              <h2 className="text-2xl font-1 text-center text-purple-300">Create New Content</h2>
+              <h2 className="text-lg md:text-2xl font-1 text-center text-purple-300">Create New Content</h2>
               <div className="space-y-2">
                 <Label htmlFor="text" className="text-sm font-medium text-gray-300">Text</Label>
                 <Textarea
