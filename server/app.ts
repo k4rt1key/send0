@@ -5,10 +5,16 @@ import dotenv from 'dotenv';
 import uploadRoutes from './routes/uploadRoutes';
 import cron from 'node-cron';
 import deleteExpiredObjects from './controllers/deleteFile';
+import cors from 'cors';
+
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+    origin: ['send0.vercel.app', 'localhost:5173']
+}));
 
 app.use(fileUpload());
 
