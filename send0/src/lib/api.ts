@@ -11,6 +11,11 @@ export async function uploadFiles(
 ): Promise<ServerResponse> {
   
   const formData = new FormData();
+
+  if(data.text === undefined || data.text === null || data.text === ""){
+    data.text = "No text provided";
+  }
+  
   formData.append('name', data.name);
   formData.append('text', data.text);
   formData.append('password', data.password);

@@ -58,7 +58,7 @@ module.exports = {
 			},
 			fontFamily: {
 				1: ['Libre Baskerville', 'serif'],
-				2: ['Montserrat', 'sans-serif'],
+				2: ['Roboto Mono', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
