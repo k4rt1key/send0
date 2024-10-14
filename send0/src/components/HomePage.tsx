@@ -372,22 +372,6 @@ export default function Component() {
               </form>
             </DialogContent>
           </Dialog>
-          <style jsx global>{`
-            ::-webkit-scrollbar {
-              width: 10px;
-            }
-            ::-webkit-scrollbar-track {
-              background: rgba(31, 41, 55, 0.5);
-              border-radius: 5px;
-            }
-            ::-webkit-scrollbar-thumb {
-              background: rgba(139, 92, 246, 0.5);
-              border-radius: 5px;
-            }
-            ::-webkit-scrollbar-thumb:hover {
-              background: rgba(139, 92, 246, 0.7);
-            }
-          `}</style>
         </div>
         <div className='md:hidden text-white flex justify-center items-center h-screen'>
           Please use a desktop browser or use desktop mode in your mobile browser to access this page.
