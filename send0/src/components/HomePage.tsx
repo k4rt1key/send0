@@ -41,6 +41,7 @@ export default function ImprovedSend0Dark() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
   const [progressValue, setProgressValue]= useState(0);
+  const [isInitialState, setIsInitialState] = useState(true);
 
   const fetchContent = async (password?: string) => {
     if (name) {
@@ -79,6 +80,7 @@ export default function ImprovedSend0Dark() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     navigate(`/${nameInput}`)
+    setIsInitialState(false)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,6 +221,7 @@ export default function ImprovedSend0Dark() {
               )}
             </div>
           ) : (
+            !isInitialState &&
             <form onSubmit={handleUpload} className="space-y-4">
               <h2 className="text-lg md:text-2xl font-1 text-center text-purple-300">Create New Content</h2>
               <div className="space-y-2">
