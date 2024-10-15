@@ -80,6 +80,8 @@ export default function Send0() {
           }
         }
       }
+
+      setFiles([]); 
       setLoading(false)
     }
   }
