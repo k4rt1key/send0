@@ -82,6 +82,7 @@ export default function Send0() {
       }
 
       setFiles([]); 
+      setText('');
       setLoading(false)
     }
   }
