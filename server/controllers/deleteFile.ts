@@ -19,12 +19,15 @@ export default async function deleteExpiredObjects() {
         const allObjects = await UploadModel.find({}); 
 
         for (let obj of allObjects) {
-            const { name, expiryTime, createdAt } = obj;
+            const { name, expiryTime, createdAt, files } = obj;
 
             if (hasExpired(createdAt, expiryTime)) {
                 
                 await UploadModel.deleteOne({ name });
-                await deleteObjectFromS3(name);
+                for (let file of files) {
+                    await deleteObjectFromS3(file.name);
+                    console.log(`Deleted S3 object: ${file.name}`);
+                }
                 console.log(`Deleted S3 object: ${name}`);
             }
         }
