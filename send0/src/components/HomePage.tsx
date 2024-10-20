@@ -372,21 +372,6 @@ export default function send0() {
               {content && (
                 <div className="mt-4 p-4 bg-white rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-2 text-gray-800">Shared Content</h2>
-                  {content.text && (
-                    <div className="mb-4 flex flex-col gap-2 ">
-                     <Button
-                        onClick={() => handleCopyToClipboard(content.text)}
-                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
-                      >
-                        <Copy className="w-4 h-4 mr-2" /> Copy
-                      </Button>
-                      <Textarea
-                      value={content.text}
-                      placeholder="Enter Your text..."
-                      className="w-full h-[30rem] flex-grow resize-none bg-transparent text-gray-800 rounded-md"
-                    />
-                    </div>
-                  )}
                   {content.files && content.files.length > 0 && (
                     <div>
                       <ul className="space-y-2">
@@ -408,6 +393,22 @@ export default function send0() {
                       </ul>
                     </div>
                   )}
+                  {content.text && (
+                    <div className="mb-4 flex flex-col gap-2 ">
+                     <Button
+                        onClick={() => handleCopyToClipboard(content.text)}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      >
+                        <Copy className="w-4 h-4 mr-2" /> Copy
+                      </Button>
+                      <Textarea
+                      value={content.text}
+                      placeholder="Enter Your text..."
+                      className="w-full h-[30rem] flex-grow resize-none bg-transparent text-gray-800 rounded-md"
+                    />
+                    </div>
+                  )}
+                
                 </div>
               )}
             </>
