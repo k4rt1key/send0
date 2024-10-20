@@ -373,7 +373,7 @@ export default function send0() {
                 <div className="mt-4 p-4 bg-white rounded-lg shadow">
                   <h2 className="text-xl font-semibold mb-2 text-gray-800">Shared Content</h2>
                   {content.files && content.files.length > 0 && (
-                    <div>
+                    <div className='mb-4'>
                       <ul className="space-y-2">
                         {content.files.map((file, index) => (
                           <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-md">
