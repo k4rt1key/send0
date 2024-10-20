@@ -16,7 +16,7 @@ export async function uploadFiles(
     data.text = "No text provided";
   }
   
-  formData.append('name', data.name);
+  formData.append('name', data.name.toLowerCase());
   formData.append('text', data.text);
   formData.append('password', data.password);
   formData.append('expiryTime', data.expiryTime.toString());
