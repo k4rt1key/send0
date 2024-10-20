@@ -26,7 +26,7 @@ import {
 import { Progress } from "@/components/ui/progress"
 import { Search, Copy, Download, FileText, Image as ImageIcon, Archive, FileIcon, Lock, X, Trash2 } from 'lucide-react'
 
-export default function Send0() {
+export default function cl1p.in() {
   const navigate = useNavigate()
   const location = useLocation()
   const [nameInput, setNameInput] = useState('')
@@ -193,7 +193,7 @@ export default function Send0() {
   const renderHomeContent = function(){
     return (
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-light text-gray-800">How to use Send0</h2>
+        <h2 className="text-2xl font-light text-gray-800">How to use cl1p.in</h2>
         <p className="text-gray-600">
           1. Enter a unique name for your clip in the search bar.
         </p>
@@ -207,7 +207,7 @@ export default function Send0() {
           4. Set an expiry time and optional password.
         </p>
         <p className="text-gray-600">
-          5. Click "Send0" to save and share your content.
+          5. Click "cl1p.in" to save and share your content.
         </p>
       </div>
     )
@@ -217,7 +217,7 @@ export default function Send0() {
     <div className="font-mono text-gray-800 flex flex-col min-h-screen bg-white bg-grid-gray-200">
       <div className="container mx-auto py-4 flex flex-col flex-grow">
         <div className="rounded-lg py-4 flex flex-col h-full">
-          <h1 className="text-3xl font-light mb-6 text-center text-gray-800">Send0</h1>
+          <h1 className="text-3xl font-light mb-6 text-center text-gray-800">cl1p.in</h1>
           
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-6">
             <div className="relative flex-grow w-full">
@@ -362,7 +362,7 @@ export default function Send0() {
                   onClick={handleUpload}
                   className="w-full mt-4  bg-gray-800 hover:bg-gray-700 text-white rounded-md"
                 >
-                  Send0
+                  cl1p.in
                 </Button>
               )}
               </>
