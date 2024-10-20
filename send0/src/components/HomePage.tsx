@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getSharedContent, uploadFiles } from '@/lib/api'
 import { UploadData } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -24,11 +24,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { Search, Copy, Download, FileText, Image as ImageIcon, Archive, FileIcon, Lock } from 'lucide-react'
+import { Search, Copy, Download, FileText, Image as ImageIcon, Archive, FileIcon, Lock, X, Trash2 } from 'lucide-react'
 
 export default function Send0() {
-  const location = useLocation()
+  const { name } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [nameInput, setNameInput] = useState('')
   const [password, setPassword] = useState('')
   const [isPasscode, setIsPasscode] = useState(false)
@@ -42,15 +43,23 @@ export default function Send0() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [progressValue, setProgressValue] = useState(0)
+  const [dofetchContent, setDoFetchContent] = useState(false)
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search)
-    const name = searchParams.get('name')
-    if (name) {
-      setNameInput(name)
-      fetchContent()
+    const path = location.pathname.slice(1)
+    
+    if (path) {
+      setNameInput(path)
+      setDoFetchContent(true)
     }
-  }, [location])
+  }, [])
+
+  useEffect(() => {
+    if (dofetchContent){
+      fetchContent()
+      setDoFetchContent(false)
+    }
+  },[nameInput])
 
   const fetchContent = async (password?: string) => {
     if (nameInput) {
@@ -80,23 +89,24 @@ export default function Send0() {
           }
         }
       }
-
-      setFiles([]); 
-      setText('');
       setLoading(false)
     }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    navigate(`?name=${encodeURIComponent(nameInput)}`)
+    navigate(`/${encodeURIComponent(nameInput)}`)
     fetchContent()
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFiles(Array.from(e.target.files))
+      setFiles(prevFiles => [...prevFiles, ...Array.from(e.target.files || [])])
     }
+  }
+
+  const handleRemoveFile = (index: number) => {
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index))
   }
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -146,241 +156,293 @@ export default function Send0() {
     const extension = fileName.split('.').pop()?.toLowerCase()
     switch (extension) {
       case 'pdf':
-        return <FileText className="w-5 h-5 text-red-400" />
+        return <FileText className="w-5 h-5 text-red-500" />
       case 'png':
+        return <ImageIcon className="w-5 h-5 text-green-500" />
       case 'jpg':
+        return <ImageIcon className="w-5 h-5 text-green-500" />
       case 'jpeg':
+        return <ImageIcon className="w-5 h-5 text-green-500" />
       case 'gif':
-        return <ImageIcon className="w-5 h-5 text-green-400" />
+        return <ImageIcon className="w-5 h-5 text-green-500" />
       case 'zip':
+        return <Archive className="w-5 h-5 text-yellow-500" />
       case 'rar':
-        return <Archive className="w-5 h-5 text-yellow-400" />
+        return <Archive className="w-5 h-5 text-yellow-500" />
       default:
-        return <FileIcon className="w-5 h-5 text-blue-400" />
+        return <FileIcon className="w-5 h-5 text-blue-500" />
     }
   }
 
-  const handleDownloadAll = () => {
-    content?.files.forEach(file => {
-      window.open(file.presignedUrl, '_blank')
+
+  const handleCopyToClipboard = (textToCopy: string) => {
+    navigator.clipboard.writeText(textToCopy)
+    toast({
+      title: 'Copied',
+      description: 'Content copied to clipboard',
     })
   }
 
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(content?.text || '')
-    toast({
-      title: 'Copied',
-      description: 'Text copied to clipboard',
-    })
+  const handleClearText = () => {
+    setText('')
+  }
+
+  const handleClearFiles = () => {
+    setFiles([])
+  }
+
+  const renderHomeContent = function(){
+    return (
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-light text-gray-800">How to use Send0</h2>
+        <p className="text-gray-600">
+          1. Enter a unique name for your clip in the search bar.
+        </p>
+        <p className="text-gray-600">
+          2. Click "GO" to create a new clip or access an existing one.
+        </p>
+        <p className="text-gray-600">
+          3. Add text or files to your clip.
+        </p>
+        <p className="text-gray-600">
+          4. Set an expiry time and optional password.
+        </p>
+        <p className="text-gray-600">
+          5. Click "Send0" to save and share your content.
+        </p>
+      </div>
+    )
   }
 
   return (
-    <>
-      <div className="font-2 text-gray-100 hidden md:flex flex-col min-h-screen">
-        <div className="container mx-auto p-4 sm:p-6 flex flex-col flex-grow">
-          <h1 className="text-3xl sm:text-4xl font-1 font-light mb-6 sm:mb-8 text-center text-purple-300">Send0</h1>
+    <div className="font-mono text-gray-800 flex flex-col min-h-screen bg-white bg-grid-gray-200">
+      <div className="container mx-auto py-4 flex flex-col flex-grow">
+        <div className="rounded-lg py-4 flex flex-col h-full">
+          <h1 className="text-3xl font-light mb-6 text-center text-gray-800">Send0</h1>
           
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-6 sm:mb-8">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-6">
             <div className="relative flex-grow w-full">
               <Input
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
-                placeholder="Enter a name"
-                className="pl-10 pr-4 py-2 bg-transparent backdrop-blur-sm border-gray-700 text-gray-100 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full"
+                placeholder="Enter clip name..."
+                className="pl-10 pr-4 py-2 bg-transparent text-gray-800 rounded-md w-full"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
-            <Button type="submit" className="bg-purple-600 bg-opacity-80 hover:bg-opacity-100 rounded-full px-6 w-full sm:w-auto">Search</Button>
+            <Button type="submit" className="bg-gray-800 hover:bg-gray-700 text-white rounded-md px-6 w-full sm:w-auto">GO</Button>
           </form>
 
-          {isSearched && (
-            <div className="flex flex-grow backdrop-blur-md bg-gray-800 bg-opacity-30 rounded-lg overflow-hidden">
-              <div className="w-48 bg-gray-900 bg-opacity-50 p-4 flex md:flex-col space-y-2">
+          {(!isSearched || (isSearched && !nameInput)) ? (
+            renderHomeContent()
+          ) : (
+            <>
+              { !content && (
+                <>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
                 <Button
                   onClick={() => setActiveTab('text')}
-                  className={`justify-start ${activeTab === 'text' ? 'bg-purple-600 bg-opacity-80 text-white' : 'bg-transparent text-gray-300 hover:text-white'}`}
+                  className={`flex-1 ${activeTab === 'text' ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
                 >
-                  <FileText className="mr-2 w-5 h-5" /> Text
+                  Text
                 </Button>
                 <Button
                   onClick={() => setActiveTab('files')}
-                  className={`justify-start ${activeTab === 'files' ? 'bg-purple-600 bg-opacity-80 text-white' : 'bg-transparent text-gray-300 hover:text-white'}`}
+                  className={`flex-1 ${activeTab === 'files' ? 'bg-gray-800 hover:bg-gray-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}
                 >
-                  <Archive className="mr-2 w-5 h-5" /> Files
+                  Files
                 </Button>
               </div>
 
-              <div className="flex-grow p-4 sm:p-6 overflow-y-auto">
-                {content ? (
-                  <>
-                    {activeTab === 'text' && content.text && (
-                      <div className="relative h-full">
-                        <Textarea
-                          value={content.text}
-                          readOnly
-                          className="w-full h-[calc(100vh-300px)] resize-none bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg p-4"
-                        />
-                        <Button
-                          onClick={handleCopyToClipboard}
-                          className="absolute top-4 right-8 bg-purple-600 bg-opacity-30 hover:bg-opacity-100 rounded-lg"
-                        >
-                          <Copy className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    )}
-                    {activeTab === 'files' && content.files && content.files.length > 0 && (
-                      <div className="h-full flex flex-col">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="text-lg font-light text-purple-300">Files</h3>
-                          <Button
-                            onClick={handleDownloadAll}
-                            className="bg-purple-600 bg-opacity-80 hover:bg-opacity-100 rounded-full px-4"
-                          >
-                            Download All
-                          </Button>
-                        </div>
-                        <ul className="space-y-2 overflow-y-auto flex-grow">
-                          {content.files.map((file, index) => (
-                            <li key={index} className="flex items-center justify-between bg-gray-700 bg-opacity-30 backdrop-blur-sm p-3 rounded-lg">
-                              <div className="flex items-center space-x-3 overflow-hidden">
+              <div className="flex-grow bg-white h-[30rem] rounded-lg py-4 overflow-hidden shadow-inner">
+                {activeTab === 'text' ? (
+                  <div className="h-full flex flex-col">
+                    <Textarea
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      placeholder="Enter Your text..."
+                      className="w-full flex-grow resize-none bg-transparent text-gray-800 rounded-md"
+                    />
+                    <div className="flex justify-end space-x-2 mt-2">
+                      <Button
+                        onClick={() => handleCopyToClipboard(text)}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      >
+                        <Copy className="w-4 h-4 mr-2" /> Copy
+                      </Button>
+                      <Button
+                        onClick={handleClearText}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Clear
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col">
+                    <Input
+                      type="file"
+                      multiple
+                      onChange={handleFileChange}
+                      className="mb-4 bg-transparent text-gray-800 rounded-md file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-800 file:text-white hover:file:bg-gray-700"
+                    />
+                    {files.length > 0 && (
+                      <div className="overflow-y-auto flex-grow" style={{ maxHeight: 'calc(100% - 80px)' }}>
+                        <ul className="space-y-2">
+                          {files.map((file, index) => (
+                            <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-md">
+                              <div className="flex items-center space-x-2">
                                 {getFileIcon(file.name)}
                                 <span className="truncate">{file.name}</span>
                               </div>
                               <Button
-                                asChild
+                                onClick={() => handleRemoveFile(index)}
                                 variant="ghost"
-                                className="text-purple-300 hover:text-purple-100 hover:bg-purple-800 hover:bg-opacity-50 rounded-full"
+                                size="icon"
+                                className="text-red-500 hover:text-red-600 hover:bg-red-100"
                               >
-                                <a href={file.presignedUrl} target="_blank" rel="noopener noreferrer">
-                                  <Download className="w-5 h-5" />
-                                </a>
+                                <X className="h-4 w-4" />
                               </Button>
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
-                  </>
-                ) : (
-                  <form onSubmit={handleUpload} className="h-full flex flex-col">
-                    {activeTab === 'text' && (
-                      <div className="flex-grow mb-4">
-                        <Label htmlFor="text" className="text-sm font-medium mb-2 block text-gray-300">Text</Label>
-                        <Textarea
-                          id="text"
-                          value={text}
-                          onChange={(e) => setText(e.target.value)}
-                          placeholder="Paste in anything you want."
-                          className="w-full h-[calc(100vh-400px)] resize-none bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg p-4"
-                        />
-                      </div>
-                    )}
-                    {activeTab === 'files' && (
-                      <div className="flex-grow mb-4">
-                        <Label htmlFor="files" className="text-sm font-medium mb-2 block text-gray-300">Files</Label>
-                        <Input
-                          id="files"
-                          type="file"
-                          multiple
-                          onChange={handleFileChange}
-                          className="bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg file:text-gray-100 file:border-0 file:rounded-full file:cursor-pointer"
-                        />
-                        {files.length > 0 && (
-                          <ul className="mt-4 px-2 space-y-2 max-h-[calc(100vh-500px)] overflow-y-auto">
-                            {files.map((file, index) => (
-                              <li key={index} className="text-sm bg-gray-700 bg-opacity-30 backdrop-blur-sm p-2 rounded-lg flex items-center">
-                                {getFileIcon(file.name)}
-                                <span className="ml-2 truncate">{file.name}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                    <div className="space-y-4 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="isPasscode"
-                          checked={isPasscode}
-                          onCheckedChange={(checked) => setIsPasscode(checked as boolean)}
-                        />
-                        <Label htmlFor="isPasscode" className="text-sm text-gray-300 flex items-center">
-                          <Lock className="w-4 h-4 mr-2" />
-                          Protect with passcode
-                        </Label>
-                      </div>
-                      {isPasscode && (
-                        <div>
-                          <Label htmlFor="password" className="text-sm font-medium mb-2 block text-gray-300">Passcode</Label>
-                          <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        <Label htmlFor="expiryTime" className="text-sm font-medium mb-2 block text-gray-300">Expiry Time</Label>
-                        <Select value={expiryTime} onValueChange={setExpiryTime}>
-                          <SelectTrigger className="w-full bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg">
-                            <SelectValue placeholder="Select expiry time" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700 font-2 text-gray-100">
-                            <SelectItem value="1">1 hour</SelectItem>
-                            <SelectItem value="2">2 hours</SelectItem>
-                            <SelectItem value="4">4 hours</SelectItem>
-                            <SelectItem value="6">6 hours</SelectItem>
-                            <SelectItem value="12">12 hours</SelectItem>
-                            <SelectItem value="24">24 hours</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {loading && <Progress value={progressValue} 
-                      className="w-full" />}
-                      {!loading && (
-                        <Button type="submit" className="w-full bg-purple-600 bg-opacity-80 hover:bg-opacity-100 rounded-lg">Create Clip</Button>
-                      )}
+                    <div className="flex justify-end space-x-2 mt-2">
+                      <Button
+                        onClick={handleClearFiles}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" /> Clear All
+                      </Button>
                     </div>
-                  </form>
+                  </div>
                 )}
               </div>
-            </div>
-          )}
-        </div>
 
-        <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-          <DialogContent className="sm:max-w-[425px] bg-gray-800 bg-opacity-90 backdrop-blur-md text-gray-100 rounded-lg">
-            <DialogHeader>
-              <DialogTitle className="text-purple-300">Password Required</DialogTitle>
-              <DialogDescription className="text-gray-400">
-                This content is password protected. Please enter the password to view it.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handlePasswordSubmit}>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="passwordInput" className="text-sm text-gray-300">Password</Label>
+              <div className="mt-4 space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isPasscode"
+                    checked={isPasscode}
+                    onCheckedChange={(checked) => setIsPasscode(checked as boolean)}
+                  />
+                  <Label htmlFor="isPasscode" className="text-sm text-gray-600 flex items-center">
+                    <Lock className="w-4 h-4 mr-2" />
+                    Protect with passcode
+                  </Label>
+                </div>
+                {isPasscode && (
                   <Input
-                    id="passwordInput"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-transparent backdrop-blur-sm border-gray-600 text-gray-100 rounded-lg"
+                    placeholder="Passcode"
+                    className="bg-transparent text-gray-800 rounded-md"
                   />
-                </div>
+                )}
+                <Select value={expiryTime} onValueChange={setExpiryTime}>
+                  <SelectTrigger className="w-full bg-transparent text-gray-800 rounded-md">
+                    <SelectValue placeholder="Expiry Time" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 hour</SelectItem>
+                    <SelectItem value="2">2 hours</SelectItem>
+                    <SelectItem value="4">4 hours</SelectItem>
+                    <SelectItem value="6">6 hours</SelectItem>
+                    <SelectItem value="12">12 hours</SelectItem>
+                    <SelectItem value="24">24 hours</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <DialogFooter className="mt-4">
-                <Button type="submit" className="bg-purple-600 bg-opacity-80 hover:bg-opacity-100 rounded-lg">Submit</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+
+              {loading ? (
+                <Progress value={progressValue} className="w-full mt-4" />
+              ) : (
+                <Button
+                  onClick={handleUpload}
+                  className="w-full mt-4  bg-gray-800 hover:bg-gray-700 text-white rounded-md"
+                >
+                  Send0
+                </Button>
+              )}
+              </>
+              )}
+            
+
+              {content && (
+                <div className="mt-4 p-4 bg-white rounded-lg shadow">
+                  <h2 className="text-xl font-semibold mb-2 text-gray-800">Shared Content</h2>
+                  {content.text && (
+                    <div className="mb-4 flex flex-col gap-2 ">
+                     <Button
+                        onClick={() => handleCopyToClipboard(content.text)}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      >
+                        <Copy className="w-4 h-4 mr-2" /> Copy
+                      </Button>
+                      <Textarea
+                      value={content.text}
+                      placeholder="Enter Your text..."
+                      className="w-full h-[30rem] flex-grow resize-none bg-transparent text-gray-800 rounded-md"
+                    />
+                    </div>
+                  )}
+                  {content.files && content.files.length > 0 && (
+                    <div>
+                      <ul className="space-y-2">
+                        {content.files.map((file, index) => (
+                          <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-md">
+                            {getFileIcon(file.name)}
+                            <span className="truncate text-gray-800">{file.name}</span>
+                            <Button
+                              asChild
+                              variant="ghost"
+                              className="text-gray-600 hover:text-gray-800"
+                            >
+                              <a href={file.presignedUrl} target="_blank" rel="noopener noreferrer">
+                                <Download className="w-5 h-5" />
+                              </a>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-      <div className='md:hidden text-white flex justify-center items-center h-screen'>
-        Please use a desktop browser or use desktop mode in your mobile browser to access this page.
-      </div>
-    </>
+
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white text-gray-800 rounded-lg">
+          <DialogHeader>
+            <DialogTitle className="text-gray-800">Password Required</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              This content is password protected. Please enter the password to view it.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="passwordInput" className="text-sm text-gray-600">Password</Label>
+                <Input
+                  id="passwordInput"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-transparent text-gray-800 rounded-md"
+                />
+              </div>
+            </div>
+            <DialogFooter className="mt-4">
+              <Button type="submit" className="bg-gray-800 hover:bg-gray-700 text-white rounded-md">Submit</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }
