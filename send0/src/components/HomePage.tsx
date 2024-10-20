@@ -27,7 +27,6 @@ import { Progress } from "@/components/ui/progress"
 import { Search, Copy, Download, FileText, Image as ImageIcon, Archive, FileIcon, Lock, X, Trash2 } from 'lucide-react'
 
 export default function Send0() {
-  const { name } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const [nameInput, setNameInput] = useState('')
