@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { getSharedContent, uploadFiles } from '@/lib/api'
 import { UploadData } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
