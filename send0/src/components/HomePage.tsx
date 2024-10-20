@@ -43,6 +43,13 @@ export default function send0() {
   const [loading, setLoading] = useState(false)
   const [progressValue, setProgressValue] = useState(0)
   const [dofetchContent, setDoFetchContent] = useState(false)
+  const handleClearText = () => {
+    setText('')
+  }
+
+  const handleClearFiles = () => {
+    setFiles([])
+  }
 
   useEffect(() => {
     const path = location.pathname.slice(1)
@@ -95,8 +102,10 @@ export default function send0() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     navigate(`/${encodeURIComponent(nameInput)}`)
+    handleClearFiles()
+    handleClearText()
     fetchContent()
-  }
+  } 
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -182,14 +191,7 @@ export default function send0() {
     })
   }
 
-  const handleClearText = () => {
-    setText('')
-  }
-
-  const handleClearFiles = () => {
-    setFiles([])
-  }
-
+ 
   const renderHomeContent = function(){
     return (
       <div className="text-center space-y-4">
