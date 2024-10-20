@@ -60,7 +60,7 @@ export async function getSharedContent(
 }> {
 
   const formData = new FormData();
-  formData.append('name', name);
+  formData.append('name', name.toLowerCase());
   if (password) {
     formData.append('password', password);
   }
