@@ -28,6 +28,9 @@ app.use('/api/v1', uploadRoutes);
 cron.schedule('*/1 * * * *', () => {
     console.log('Running scheduled task to delete expired S3 objects...');
     deleteExpiredObjects();
+},{
+    scheduled: true,
+    timezone: 'Etc/UTC' 
 });
 
 
