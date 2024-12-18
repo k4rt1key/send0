@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)", 
-      "destination": "https://send0-server.stayinit.in/api/$1"
+      "destination": "https://api.cl1p.in/api/$1"
     },
     {
       "source": "/(.*)", 
