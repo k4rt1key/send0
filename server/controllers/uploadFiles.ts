@@ -36,7 +36,8 @@ export const uploadFiles = async (req: Request, res: Response): Promise<any> => 
             link: (s3Data as any).Location,
             type: file?.mimetype,
             name: file?.name,
-            expiryTime: expiryTime
+            expiryTime: expiryTime,
+            isDeleteAfterView: expiryTime == 0 ? true : false,
           };
         }));
       }
@@ -50,7 +51,8 @@ export const uploadFiles = async (req: Request, res: Response): Promise<any> => 
       hasPassword,
       password: hashedPassword,
       name,
-      expiryTime: expiryTime
+      expiryTime: expiryTime,
+      isDeleteAfterView: expiryTime == 0 ? true : false
     });
 
     await newUpload.save();

@@ -6,6 +6,7 @@ interface FileSchema {
   type: string;
   name: string;
   presignedUrl: string;
+  isDeleteAfterView: boolean;
   expiryTime: number;
 }
 
@@ -16,6 +17,7 @@ export interface UploadDocument extends Document {
   password?: string;
   name: string;
   expiryTime: number;
+  isDeleteAfterView: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,7 +36,8 @@ const UploadSchema = new Schema<UploadDocument>({
   hasPassword: { type: Boolean, required: true },
   password: { type: String },
   name: { type: String, required: true, unique: true },
-  expiryTime: { type: Number, required: true }
+  expiryTime: { type: Number, required: true },
+  isDeleteAfterView: {type: Boolean, default: false}
 },{timestamps:true});
 
 UploadSchema.pre('save', async function(next) {

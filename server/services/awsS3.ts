@@ -46,10 +46,11 @@ export const generatePresignedUrlForGetObject = async (key: string, expiryTime: 
     const params = {
       Bucket: bucketName,
       Key: key,
-      Expires: 3600 * expiryTime,
+      Expires: expiryTime,
       ResponseContentDisposition: `attachment; filename="${key}"`,
     };
 
+    console.log(params)
     return await s3.getSignedUrlPromise('getObject', params); 
   } catch (error) {
     console.log("======================= ERROR ==========================");
@@ -60,8 +61,16 @@ export const generatePresignedUrlForGetObject = async (key: string, expiryTime: 
 
 
 export const deleteObjectFromS3 = async (name: string) => {
-  return s3.deleteObject({
-    Bucket: process.env.AWS_S3_BUCKET_NAME!,
-    Key: name
-  });
+  s3.deleteObject({
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Key: name
+    },(err, data) => {
+          if (err) {
+              console.error("Error deleting object:", err);
+          } else {
+              console.log("Object deleted successfully:", data);
+          }
+    });
+
+    return;
 }

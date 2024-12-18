@@ -8,6 +8,7 @@ import deleteExpiredObjects from './controllers/deleteFile';
 import cors from 'cors';
 
 
+
 dotenv.config();
 
 const app = express();
@@ -23,7 +24,8 @@ app.use(express.json());
 // Routes
 app.use('/api/v1', uploadRoutes);
 
-cron.schedule('*/10 * * * *', () => {
+
+cron.schedule('*/1 * * * *', () => {
     console.log('Running scheduled task to delete expired S3 objects...');
     deleteExpiredObjects();
 });

@@ -9,7 +9,14 @@ import {deleteObjectFromS3} from '../services/awsS3';
 function hasExpired(createdAt: Date, expiryTime: number) {
     const currentTime = new Date();
     const expiryDate = new Date(createdAt);
-    expiryDate.setHours(expiryDate.getHours() + expiryTime);
+
+    let expiryTimeMins = 0;
+    let expiryTimeHours = 0;
+        expiryTimeMins = (expiryTime % 3600)/60;
+        expiryTimeHours = expiryTime / 3600;
+
+    expiryDate.setHours(expiryDate.getHours() + expiryTimeHours);
+    expiryDate.setMinutes(expiryDate.getMinutes()+ expiryTimeMins);
 
     return currentTime > expiryDate;
 }
@@ -21,7 +28,7 @@ export default async function deleteExpiredObjects() {
         for (let obj of allObjects) {
             const { name, expiryTime, createdAt, files } = obj;
 
-            if (hasExpired(createdAt, expiryTime)) {
+            if ( expiryTime != 0 && hasExpired(createdAt, expiryTime)) {
                 
                 for (let file of files) {
                     await deleteObjectFromS3(file.name);
