@@ -24,7 +24,7 @@ jobs:
           # Change directory to where the Dockerfile is located
           cd server
           # Build the Docker image
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/send0-server:send0-server-1 .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cl1p-server:latest .
 
       # Step 4: Log in to Docker Hub
       - name: Log in to Docker Hub
@@ -36,7 +36,7 @@ jobs:
       # Step 5: Push Docker image to Docker Hub
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/send0-server:send0-server-1
+          docker push ${{ secrets.DOCKER_USERNAME }}/cl1p-server:latest
 
       # Step 6: SSH to EC2 and deploy the new image
       - name: SSH and Deploy
@@ -47,11 +47,11 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }} # SSH private key stored in Secrets
           script: |
             # Stop any existing container with the same name
-            sudo docker stop send0-server || true
-            sudo docker rm send0-server || true
+            sudo docker stop cl1p-server || true
+            sudo docker rm cl1p-server || true
 
             # Pull the new Docker image
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/send0-server:send0-server-1
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cl1p-server:latest
 
             # Run the new Docker container with environment variables
             sudo docker run -d \
@@ -62,5 +62,5 @@ jobs:
               -e PORT="${{ secrets.PORT }}" \
               -e MONGO_URI="${{ secrets.MONGO_URI }}" \
               -p 6000:6000 \
-              --name send0-server \
-              ${{ secrets.DOCKER_USERNAME }}/send0-server:send0-server-1
+              --name cl1p-server \
+              ${{ secrets.DOCKER_USERNAME }}/cl1p-server:latest
