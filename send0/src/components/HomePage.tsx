@@ -35,7 +35,7 @@ export default function send0() {
   const [content, setContent] = useState<UploadData | null>(null)
   const [text, setText] = useState('')
   const [files, setFiles] = useState<File[]>([])
-  const [expiryTime, setExpiryTime] = useState('60')
+  const [expiryTime, setExpiryTime] = useState('300')
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'text' | 'files'>('text')
   const [isSearched, setIsSearched] = useState(false)
@@ -348,7 +348,6 @@ export default function send0() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="60">1 min</SelectItem>
-                        <SelectItem value="120">2 mins</SelectItem>
                         <SelectItem value="300">5 mins</SelectItem>
                         <SelectItem value="3600">1 hours</SelectItem>
                         <SelectItem value="43200">12 hours</SelectItem>
