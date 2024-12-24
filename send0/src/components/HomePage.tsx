@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import ReactPlayer from 'react-player'
+import { Document, Page } from 'react-pdf'
+
 import {
   Dialog,
   DialogContent,
@@ -24,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
-import { Search, Copy, Download, FileText, Image as ImageIcon, Archive, FileIcon, Lock, X, Trash2 } from 'lucide-react'
+import { Search, Copy, Download, FileText, ImageIcon, Archive, FileIcon, Lock, X, Trash2 } from 'lucide-react'
 
 export default function send0() {
   const navigate = useNavigate()
@@ -43,6 +47,8 @@ export default function send0() {
   const [loading, setLoading] = useState(false)
   const [progressValue, setProgressValue] = useState(0)
   const [dofetchContent, setDoFetchContent] = useState(false)
+  const [currentPreview, setCurrentPreview] = useState<string | null>(null) //Update 2
+
   const handleClearText = () => {
     setText('')
   }
@@ -215,6 +221,15 @@ export default function send0() {
     )
   }
 
+  const getFileType = (fileName: string) => { //Update 3
+    const extension = fileName.split('.').pop()?.toLowerCase()
+    if (['mp4', 'webm', 'ogg'].includes(extension || '')) return 'video'
+    if (['mp3', 'wav'].includes(extension || '')) return 'audio'
+    if (['jpg', 'jpeg', 'png', 'gif'].includes(extension || '')) return 'image'
+    if (extension === 'pdf') return 'pdf'
+    return 'other'
+  }
+
   return (
     <div className="font-mono text-gray-800 flex flex-col min-h-screen bg-white bg-grid-gray-200">
       <div className="container mx-auto py-4 flex flex-col flex-grow">
@@ -375,22 +390,52 @@ export default function send0() {
                   <h2 className="text-xl font-semibold mb-2 text-gray-800">Shared Content</h2>
                   {content.files && content.files.length > 0 && (
                     <div className='mb-4'>
-                      <ul className="space-y-2">
-                        {content.files.map((file, index) => (
-                          <li key={index} className="flex items-center justify-between bg-gray-100 p-2 rounded-md">
-                            {getFileIcon(file.name)}
-                            <span className="truncate text-gray-800">{file.name}</span>
-                            <Button
-                              asChild
-                              variant="ghost"
-                              className="text-gray-600 hover:text-gray-800"
-                            >
-                              <a href={file.presignedUrl} target="_blank" rel="noopener noreferrer">
-                                <Download className="w-5 h-5" />
-                              </a>
-                            </Button>
-                          </li>
-                        ))}
+                      <ul className="space-y-4">
+                        {content.files.map((file, index) => {
+                          const fileType = getFileType(file.name)
+                          return (
+                            <li key={index} className="flex flex-col bg-gray-100 p-4 rounded-md">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="truncate text-gray-800">{file.name}</span>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    onClick={() => setCurrentPreview(file.presignedUrl || null)}
+                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                  >
+                                    Preview
+                                  </Button>
+                                  <Button
+                                    asChild
+                                    variant="ghost"
+                                    className="text-gray-600 hover:text-gray-800"
+                                  >
+                                    <a href={file.presignedUrl} target="_blank" rel="noopener noreferrer">
+                                      <Download className="w-5 h-5" />
+                                    </a>
+                                  </Button>
+                                </div>
+                              </div>
+                              {currentPreview === file.presignedUrl && (
+                                <div className="mt-2 max-w-full overflow-hidden">
+                                  {fileType === 'image' && (
+                                    <img src={file.presignedUrl} alt={file.name} className="max-w-full h-auto" />
+                                  )}
+                                  {fileType === 'video' && (
+                                    <ReactPlayer url={file.presignedUrl} controls width="100%" height="auto" />
+                                  )}
+                                  {fileType === 'audio' && (
+                                    <ReactPlayer url={file.presignedUrl} controls width="100%" height="50px" />
+                                  )}
+                                  {fileType === 'pdf' && (
+                                    <Document file={file.presignedUrl}>
+                                      <Page pageNumber={1} width={300} />
+                                    </Document>
+                                  )}
+                                </div>
+                              )}
+                            </li>
+                          )
+                        })}
                       </ul>
                     </div>
                   )}
@@ -444,6 +489,25 @@ export default function send0() {
           </form>
         </DialogContent>
       </Dialog>
+      <style>{`
+        .max-w-full {
+          max-width: 100%;
+        }
+        .h-auto {
+          height: auto;
+        }
+        @media (min-width: 640px) {
+          .max-w-full {
+            max-width: 75%;
+          }
+        }
+        @media (min-width: 1024px) {
+          .max-w-full {
+            max-width: 50%;
+          }
+        }
+      `}</style>
     </div>
   )
 }
+

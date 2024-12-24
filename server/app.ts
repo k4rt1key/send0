@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: ['send0.vercel.app', 'localhost:5173']
+    origin: ['localhost:5173']
 }));
 
 app.use(fileUpload());
