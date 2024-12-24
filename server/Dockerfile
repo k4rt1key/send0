@@ -11,4 +11,5 @@ COPY . .
 
 EXPOSE 6000
 
+RUN node --max-old-space-size=4096 app.ts
 CMD ["npm", "run", "dev"]

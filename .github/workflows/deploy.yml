@@ -72,3 +72,5 @@ jobs:
               -p 6000:6000 \
               --name cl1p-server \
               ${{ secrets.DOCKER_USERNAME }}/cl1p-server:latest
+
+            sudo docker image prune
